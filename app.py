@@ -37,9 +37,9 @@ ticketHTML = '''
                 <div class="row align-items-center">
 
                     <div class="col" style="text-align:left;">
-                        <h3><a href="https://paste.debian.net/">Pastebin</a></h3><br/>
+                        <h3><a target="_blank" href="https://paste.debian.net/">Pastebin</a></h3><br/>
 
-                        Copy and paste your code into <a href="https://paste.debian.net/">https://paste.debian.net/</a><br/>
+                        Copy and paste your code into <a target="_blank" href="https://paste.debian.net/">https://paste.debian.net/</a><br/>
                         Click "Send". <br/>
                         Then copy and paste your url into the box below. It should look like this: paste.debian.net/1217385
                         <br/><br/>
@@ -47,10 +47,10 @@ ticketHTML = '''
 
                     </div>
                     <div class="col" style="text-align: left;">
-                        <h3><a href="https://pasteboard.co/">Pasteboard</a></h3><br/>
+                        <h3><a target="_blank" href="https://pasteboard.co/">Pasteboard</a></h3><br/>
                         If you think it would be useful to send a screenshot then hit "Print Screen" on your keyboard. It may be labeled as "PrtScn"<br/>
                         Don't worry if nothing shows up that is good/normal it's similar to Ctrl+C for copying text. <br/>
-                        This will take a screenshot which you can then paste (Ctrl+V) into <a href="https://pasteboard.co/">pasteboard</a><br/>
+                        This will take a screenshot which you can then paste (Ctrl+V) into <a target="_blank" href="https://pasteboard.co/">pasteboard</a><br/>
                         Then select "upload" and copy/paste the link under "Here's your link:" in the box below. It should look like this: https://pasteboard.co/Qz7qwavmT2qX.png
                         <br/><br/>
                         <label class="form-label">Pasteboard URL: &nbsp;</label> <input class="form-control" type="text" name="pasteboard"/>
@@ -139,7 +139,7 @@ def admin():
 
     for singleTicket in userTickets:
 
-        addOn = f"<tr> \n\t<td>{singleTicket.TicketNum}</td><td>{singleTicket.Name}</td> <td><a href='{singleTicket.Code}'>{singleTicket.Code}</a></td>  <td><a href='{singleTicket.Screenshot}'>{singleTicket.Screenshot}</a></td>  <td>{singleTicket.Notes}</td>  <td>{singleTicket.Time}</td>\n"
+        addOn = f"<tr> \n\t<td>{singleTicket.TicketNum}</td><td>{singleTicket.Name}</td> <td><a target='blank_' href='{singleTicket.Code}'>{singleTicket.Code}</a></td>  <td><a target='blank_' href='{singleTicket.Screenshot}'>{singleTicket.Screenshot}</a></td>  <td>{singleTicket.Notes}</td>  <td>{singleTicket.Time}</td>\n"
         addOn += f'\t<td><form method="post" action="">\n'     
         if singleTicket.ResponseText != None:
             addOn += f'\t\t<textarea name ="Response">{singleTicket.ResponseText}</textarea>\n'
@@ -212,7 +212,7 @@ def displayUserTickets(StudentNumber):
     TicketsDisplayHTML +="<tr style='font-weight:bold;'><td>Code</td><td>Screenshot</td><td>Notes</td><td>Teacher Response</td></tr>"
 
     for singleTicket in userTickets:
-        TicketsDisplayHTML += f" <tr> <td><a href='{singleTicket.Code}'>{singleTicket.Code}</a></td>  <td><a href='{singleTicket.Screenshot}'>{singleTicket.Screenshot}</a></td>  <td style='white-space:pre-wrap;'>{singleTicket.Notes}</td>  <td style='white-space:pre-wrap;'>{singleTicket.ResponseText}</td></tr>" 
+        TicketsDisplayHTML += f" <tr> <td><a target='blank_' href='{singleTicket.Code}'>{singleTicket.Code}</a></td>  <td><a target='blank_' href='{singleTicket.Screenshot}'>{singleTicket.Screenshot}</a></td>  <td style='white-space:pre-wrap;'>{singleTicket.Notes}</td>  <td style='white-space:pre-wrap;'>{singleTicket.ResponseText}</td></tr>" 
     TicketsDisplayHTML +="</table>"
     TicketsDisplayHTML +=TableHtmlEnd
     #result = [r for r, in userTickets]
