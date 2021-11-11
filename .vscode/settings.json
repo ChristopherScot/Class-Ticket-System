@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "testing",
+            "database": "${workspaceFolder:FlaskServer}/codeSnippets.db"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}

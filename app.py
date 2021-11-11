@@ -37,13 +37,10 @@ ticketHTML = '''
                 <div class="row align-items-center">
 
                     <div class="col" style="text-align:left;">
-                        <h3><a target="_blank" href="https://paste.debian.net/">Pastebin</a></h3><br/>
+                        <h3>Your Code:</h3><br/>
 
-                        Copy and paste your code into <a target="_blank" href="https://paste.debian.net/">https://paste.debian.net/</a><br/>
-                        Click "Send". <br/>
-                        Then copy and paste your url into the box below. It should look like this: paste.debian.net/1217385
-                        <br/><br/>
-                        <br/><label class="form-label">Pastebin URL: &nbsp;</label> <input class="form-control" type="text" name="pastebin"/>
+                                       <textarea name="pastebin" class="form-control" rows=10 cols=100 required> </textarea>
+
 
                     </div>
                     <div class="col" style="text-align: left;">
@@ -86,6 +83,7 @@ from waitress import serve
 from flask import request
 from datetime import datetime
 import os
+import pygmentizer as pasteBin
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -139,7 +137,7 @@ def admin():
 
     for singleTicket in userTickets:
 
-        addOn = f"<tr> \n\t<td>{singleTicket.TicketNum}</td><td>{singleTicket.Name}</td> <td><a target='blank_' href='{singleTicket.Code}'>{singleTicket.Code}</a></td>  <td><a target='blank_' href='{singleTicket.Screenshot}'>{singleTicket.Screenshot}</a></td>  <td>{singleTicket.Notes}</td>  <td>{singleTicket.Time}</td>\n"
+        addOn = f"<tr> \n\t<td>{singleTicket.TicketNum}</td><td>{singleTicket.Name}</td> <td><a target='blank_' href='../post/{singleTicket.Code}'>{singleTicket.Code}</a></td>  <td><a target='blank_' href='{singleTicket.Screenshot}'>{singleTicket.Screenshot}</a></td>  <td><pre>{singleTicket.Notes}</pre></td>  <td>{singleTicket.Time}</td>\n"
         addOn += f'\t<td><form method="post" action="">\n'     
         if singleTicket.ResponseText != None:
             addOn += f'\t\t<textarea name ="Response">{singleTicket.ResponseText}</textarea>\n'
@@ -212,7 +210,7 @@ def displayUserTickets(StudentNumber):
     TicketsDisplayHTML +="<tr style='font-weight:bold;'><td>Code</td><td>Screenshot</td><td>Notes</td><td>Teacher Response</td></tr>"
 
     for singleTicket in userTickets:
-        TicketsDisplayHTML += f" <tr> <td><a target='blank_' href='{singleTicket.Code}'>{singleTicket.Code}</a></td>  <td><a target='blank_' href='{singleTicket.Screenshot}'>{singleTicket.Screenshot}</a></td>  <td style='white-space:pre-wrap;'>{singleTicket.Notes}</td>  <td style='white-space:pre-wrap;'>{singleTicket.ResponseText}</td></tr>" 
+        TicketsDisplayHTML += f" <tr> <td><a target='blank_' href='post/{singleTicket.Code}'>{singleTicket.Code}</a></td>  <td><a target='blank_' href='{singleTicket.Screenshot}'>{singleTicket.Screenshot}</a></td>  <td style='white-space:pre-wrap;'>{singleTicket.Notes}</td>  <td style='white-space:pre-wrap;'>{singleTicket.ResponseText}</td></tr>" 
     TicketsDisplayHTML +="</table>"
     TicketsDisplayHTML +=TableHtmlEnd
     #result = [r for r, in userTickets]
@@ -245,8 +243,8 @@ def ticketSubmission():
     if request.method == 'POST':
         try:
             dateTimeObj = datetime.now()
-
-            TicketSub = Ticket(Name=request.form["Name"],SN=int(request.form["SN"]),Code=request.form["pastebin"],Screenshot=request.form["pasteboard"], Notes=request.form["Notes"],Time= dateTimeObj.strftime("%x %X"))
+            pasteBinHash = pasteBin.pygmentizer(request.form["pastebin"])
+            TicketSub = Ticket(Name=request.form["Name"],SN=int(request.form["SN"]),Code=pasteBinHash,Screenshot=request.form["pasteboard"], Notes=request.form["Notes"],Time= dateTimeObj.strftime("%x %X"))
         
         except:
             print("well that didn't go well.")
@@ -265,5 +263,19 @@ def ticketSubmission():
             NewRedirectHTML = redirectHTML.replace("https://www.w3schools.com",request.form["SN"] )
             return NewRedirectHTML
     return ticketHTML
+
+@app.route('/post/<postHash>')
+def displayPost(postHash):
+    try:
+        dbReturn=db.session.query(pasteBin.Paste.Code).filter_by(Hash=postHash).one() #Somehow errors saying table doesn't exist?!
+        listOfDictPosts = [r for r in dbReturn]
+        print(len(listOfDictPosts))
+        print(listOfDictPosts[0])
+        return listOfDictPosts[0]
+    except Exception as e: 
+        print(e)
+        return e + "\n<br/>Crap something broke!"
+
+
 
 serve(app, host='0.0.0.0', port=5000, threads=1) #WAITRESS!
